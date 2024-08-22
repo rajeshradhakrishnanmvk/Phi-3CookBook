@@ -13,6 +13,7 @@ public class JsonToHtmlMiddleware
         _next = next;
     }
 
+
     public async Task InvokeAsync(HttpContext context)
     {
         // Capture the original response body stream
