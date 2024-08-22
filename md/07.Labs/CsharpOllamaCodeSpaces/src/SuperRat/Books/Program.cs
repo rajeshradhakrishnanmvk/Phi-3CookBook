@@ -18,6 +18,9 @@ builder.Services.AddCors(o => o.AddPolicy("Policy", builder => {
 
 
 var app = builder.Build();
+// Enable serving static files (e.g., index.html)
+app.UseDefaultFiles(); // This allows serving default files like index.html
+app.UseStaticFiles();  // This serves static files from the wwwroot folder
 
 app.UseCors("Policy");
 
@@ -28,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<JsonToHtmlMiddleware>();
+
 var books = app.MapGroup("/api/books");
 
 app.MapGet("/", BookService.GetAllBooks);
@@ -36,5 +41,8 @@ app.MapGet("/{id}", BookService.GetBookById);
 app.MapPost("/", BookService.InsertBook);
 app.MapPut("/{id}", BookService.UpdateBook);
 app.MapDelete("/{id}", BookService.DeleteBook);
+
+// Redirect the root URL to index.html
+app.MapFallbackToFile("index.html");
 
 app.Run();
