@@ -37,10 +37,12 @@ var books = app.MapGroup("/api/books");
 app.MapGet("/api/books/", BookService.GetAllBooks);
 app.MapGet("/api/books/library/{library}", BookService.GeBooksByLibrary);
 app.MapGet("/api/books/{id:int}", BookService.GetBookById);
+
 app.MapPost("/api/books/", BookService.InsertBook);
 app.MapPut("/api/books/{id:int}", BookService.UpdateBook);
 app.MapDelete("/api/books/{id:int}", BookService.DeleteBook);
 
+app.MapGet("/api/books/{id:int}/update",BookService.GetBookById);
 
 
 app.Run();

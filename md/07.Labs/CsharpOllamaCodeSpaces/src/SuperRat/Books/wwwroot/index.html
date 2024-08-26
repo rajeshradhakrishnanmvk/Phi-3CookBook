@@ -4,13 +4,46 @@
     <head>
       <meta charset="utf-8" />
       <link  rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+      <style>
+        tr.htmx-swapping td {
+                              opacity: 0;
+                              transition: opacity 1s ease-out;
+                            }
+      </style>
       <title>AI Library</title>
     </head>
     <body>
-      <h3>Library</h3>
-      <div>
+      <header><h3>Library</h3></header>
+      <main>
+        <div>
+          <div>
+            <label>Book Name</label>
+            <input id="name" type="text" name="Name" value="Kalam">
+          </div>
+          <div>
+            <label>Author</label>
+            <input id="author" type="text" name="Author" value="M.T Vasudevan Nair">
+          </div>
+          <div>
+            <label>Description</label>
+            <input id="description" type="text" name="Description" value="A story, Once upon a time">
+          </div>
+          <div>
+            <label>Library</label>
+            <input id="library" type="text" name="Library" value="Kalista">
+          </div>
+          <button class="btn" hx-post="/api/books" 
+            hx-vals='js:{
+              "name": document.getElementById("name").value,
+              "author": document.getElementById("author").value,
+              "description": document.getElementById("description").value,
+              "library": document.getElementById("library").value,
+            }'>Insert</button>
+          <button class="btn" hx-get="/api/books/1">Cancel</button>
+        </div>
         <div hx-get="/api/books"  hx-trigger="load" hx-swap="beforeend">My Books</div>
-    </div>
+      </main>
+      <footer><h3>Rajesh Radhakrishnan</h3></footer>
     </body>
     <script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
   </html>
