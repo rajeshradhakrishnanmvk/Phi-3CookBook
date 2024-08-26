@@ -66,8 +66,7 @@ public class JsonToHtmlMiddleware
     private string ConvertJsonToHtml(string jsonResponse, string mode)
     {
         var jsonDocument = JsonDocument.Parse(jsonResponse);
-        //{"value":{"bookId":3,"name":"Arachar","author":"K.R. Meera","description":"Nursing","library":"Kalista"},"statusCode":200}
-        var res = jsonDocument.RootElement.GetProperty("value");
+        var res = jsonDocument.RootElement.TryGetProperty("value", out var valueElement) ? valueElement : jsonDocument.RootElement;
         var htmlxContent = $@"
             <tr hx-trigger='cancel' class='editing' hx-get='/api/book/{res.GetProperty("bookId").GetInt32()}'>
                 <td><input name='bookId' value='{res.GetProperty("bookId").GetInt32()}'></td>
@@ -79,7 +78,7 @@ public class JsonToHtmlMiddleware
                     <button class='btn danger' hx-get='/api/books/{res.GetProperty("bookId").GetInt32()}'>
                         Cancel
                     </button>
-                    <button class='btn danger' hx-put='/api/books/{res.GetProperty("bookId").GetInt32()}' hx-include='closest tr'>
+                    <button class='btn danger' hx-put='/api/books/{res.GetProperty("bookId").GetInt32()}' hx-ext='bookjson' hx-include='closest tr'>
                         Save
                     </button>
                 </td>
@@ -91,10 +90,10 @@ public class JsonToHtmlMiddleware
         var jsonDocument = JsonDocument.Parse(jsonResponse);
         var htmlBuilder = new System.Text.StringBuilder();
 
-        Console.WriteLine(jsonDocument.RootElement.ValueKind);
+        Console.WriteLine(jsonDocument.RootElement);
         if (jsonDocument.RootElement.ValueKind == JsonValueKind.Object)
-        {
-                var element = jsonDocument.RootElement.GetProperty("value");
+        {       //Console.WriteLine(jsonDocument.RootElement);
+                var element = jsonDocument.RootElement.TryGetProperty("value", out var valueElement) ? valueElement : jsonDocument.RootElement;
                 int bookid = element.GetProperty("bookId").GetInt32();
                 htmlBuilder.Append("<tr>");
                   htmlBuilder.AppendFormat("<td>{0}</td>", bookid);
@@ -133,7 +132,7 @@ public class JsonToHtmlMiddleware
 
         if (arrayItems.Count > 0 && arrayItems[0].ValueKind == JsonValueKind.Object)
         {
-            htmlBuilder.Append("<table class=\"table table-striped\">"); // PicoCSS table with striped rows
+            htmlBuilder.Append("<table id='books' class=\"table table-striped\">"); // PicoCSS table with striped rows
             htmlBuilder.Append("<thead><tr>");
 
             // Get headers from the first object's keys
@@ -155,11 +154,7 @@ public class JsonToHtmlMiddleware
                     htmlBuilder.AppendFormat("<td>{0}</td>", value.Value);
 
                 }
-                //Console.WriteLine(item);
                 int bookid = item.GetProperty("bookId").GetInt32();
-                // string name = item.GetProperty("name").GetString();
-                // string author = item.GetProperty("author").GetString();
-                // string description = item.GetProperty("description").GetString();
                 htmlBuilder.Append("<td><button class='btn danger'");
                 htmlBuilder.AppendFormat("hx-get='/api/books/{0}/update'", bookid);
                 htmlBuilder.Append("hx-trigger='edit'");
@@ -181,7 +176,6 @@ public class JsonToHtmlMiddleware
                 htmlBuilder.Append("Edit");
                 htmlBuilder.Append("</button>");
                 htmlBuilder.Append("</td>");
-                //htmlBuilder.AppendFormat("<td><a href=\"/api/books/{0}\">Edit</a></td>", bookid);
                 htmlBuilder.AppendFormat("<td><button class='btn danger' hx-delete='/api/books/{0}'>Delete</button></td>", bookid);
                 htmlBuilder.Append("</tr>");
             }
