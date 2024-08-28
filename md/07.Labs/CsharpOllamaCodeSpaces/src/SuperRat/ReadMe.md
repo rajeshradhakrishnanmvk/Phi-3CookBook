@@ -19,3 +19,10 @@ dotnet ef database update
 
 dotnet ef migrations add m2_library -o Data/Migrations
 dotnet ef database update
+
+dotnet add package Microsoft.SemanticKernel --version=1.15.0
+
+https://www.learnentityframeworkcore.com/misc/json-columns
+https://code-maze.com/efcore-store-json-in-an-entity-field/
+
+dotnet ef migrations add m3_assistant -o Data/Migrations
