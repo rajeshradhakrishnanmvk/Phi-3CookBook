@@ -37,40 +37,58 @@ namespace BooksApi.Data.Migrations
                     b.HasKey("BookId");
 
                     b.ToTable("Books");
+                });
 
-                    b.HasData(
-                        new
+            modelBuilder.Entity("BooksApi.Models.Book", b =>
+                {
+                    b.OwnsOne("Ally", "Partner", b1 =>
                         {
-                            BookId = 1,
-                            Author = "Max",
-                            Description = "Nursing",
-                            Library = "Kalista",
-                            Name = "Tom"
-                        },
-                        new
-                        {
-                            BookId = 2,
-                            Author = "Fay",
-                            Description = "Mining",
-                            Library = "Kalista",
-                            Name = "Ann"
-                        },
-                        new
-                        {
-                            BookId = 3,
-                            Author = "Sun",
-                            Description = "Nursing",
-                            Library = "Kalista",
-                            Name = "Joe"
-                        },
-                        new
-                        {
-                            BookId = 4,
-                            Author = "Fox",
-                            Description = "Computing",
-                            Library = "Kalista",
-                            Name = "Sue"
+                            b1.Property<int>("BookId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Instructions")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Name")
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("BookId");
+
+                            b1.ToTable("Books");
+
+                            b1.ToJson("Partner");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookId");
+
+                            b1.OwnsMany("ConversationHistory", "History", b2 =>
+                                {
+                                    b2.Property<int>("AllyBookId")
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<int>("Id")
+                                        .ValueGeneratedOnAddOrUpdate()
+                                        .HasColumnType("INTEGER");
+
+                                    b2.Property<string>("Answer")
+                                        .HasColumnType("TEXT");
+
+                                    b2.Property<string>("Question")
+                                        .IsRequired()
+                                        .HasColumnType("TEXT");
+
+                                    b2.HasKey("AllyBookId", "Id");
+
+                                    b2.ToTable("Books");
+
+                                    b2.WithOwner()
+                                        .HasForeignKey("AllyBookId");
+                                });
+
+                            b1.Navigation("History");
                         });
+
+                    b.Navigation("Partner");
                 });
 #pragma warning restore 612, 618
         }
